@@ -1,9 +1,21 @@
 import turtle
 from turtle import *
 
+row1=[]
+row2=[]
+row3=[]
 
 game = True
 
+
+class Remaining(Turtle):
+    def __init__(self):
+        Turtle.__init__(self)
+        self.color("white")
+        self.pu()
+        self.goto(300,300)
+        self.speed(7)
+        self.visible = False
 class Ball(Turtle):
     def __init__(self):
         Turtle.__init__(self, shape="circle")
@@ -24,6 +36,9 @@ def resume():
 
 def start_ball():
     while game:
+        block_destroy(row1)
+        block_destroy(row2)
+        block_destroy(row3)
         paddle_interaction()
         ball.forward(5)
         heading = ball.heading()
@@ -59,7 +74,8 @@ def start_ball():
             ball.setheading(heading - 90)
             print("8")
 
-def paddle_interaction():
+def paddle_interaction():    # print("vert_delta:", v_delta)
+    # print("hor_delta:", h_delta)
     #while game:
     paddle_pos = paddle.pos()
     ball_head = ball.heading()
@@ -67,8 +83,7 @@ def paddle_interaction():
 
     v_delta = ball_pos[0] - paddle_pos[0]
     h_delta = ball_pos[1] - paddle_pos[1]
-    # print("vert_delta:", v_delta)
-    # print("hor_delta:", h_delta)
+
 
 
     if v_delta < 90 and h_delta <30:
@@ -87,7 +102,7 @@ class Paddle(Turtle):
         Turtle.__init__(self, shape="square")
         self.color("white")
         self.pu()
-        self.goto(0.00, -200)
+        self.goto(0.00, -300)
         self.speed(9)
         self.shapesize(1, 7, 0)
 
@@ -102,6 +117,7 @@ class Block(Turtle):
         self.shapesize(1.5, n * 1.5, 0)
         self.goto(x, y)
 
+
 def move_paddle_right():
     newcoord = paddle.pos()
     newcoord = (newcoord[0]+15, newcoord[1])
@@ -112,7 +128,43 @@ def move_paddle_left():
     newcoord = (newcoord[0]-15, newcoord[1])
     paddle.goto(newcoord)
 
+def check_blocks_left():
+    global row1, row2, row3
+    blocksleft = (len(row1) + len(row2) + len(row3))
+    remaining.write(f"Blocks Remaining: {blocksleft}")
 
+
+def block_destroy(row):
+    print("checking blocks")
+    ballnow = ball.pos()
+    i = 0
+    for item in row:
+        ball_head = ball.heading()
+        blocknow = item.pos()
+        a_delta = blocknow[1] - ballnow[1]
+        b_delta = blocknow[0] - ballnow[0]
+        # print("blockpos", item, blocknow)
+        # range1 = range(-10, 10)
+        print
+        # print(blocknow[0] - ballnow[0])
+        if -10 <= a_delta <= 10:
+            print("In range a_delta")
+            if -20 <= b_delta <= 20:
+                print("In range b_delta")
+                this_turtle = row[i]
+                this_turtle.hideturtle()
+                row.pop(i)
+                check_blocks_left()
+                if 0 <= ball_head <= 90:
+                    ball.setheading(ball_head - 90)
+                elif 91 <= ball_head <= 180:
+                    ball.setheading(ball_head + 90)
+                elif 181 <= ball_head <= 270:
+                    ball.setheading(ball_head - 90)
+                else:
+                    ball.setheading(ball_head + 90)
+
+        i += 1
 
 
 
@@ -125,9 +177,7 @@ def create_blocks(row, qty, start, height, stretch, shade, space):
 
 #write("Block BreakOut - a game by Keith", goto(0,200), font=("Helvetica", 16, "bold"))
 
-row1=[]
-row2=[]
-row3=[]
+
 create_blocks(row=row1, start=-295, height=150, qty=6, shade = "red", stretch=3.3, space=110)
 create_blocks(row=row2, start=-290, height=200, qty=8, shade = "yellow", stretch=2.4, space= 80)
 create_blocks(row=row3, start=-300, height=250, qty=7, shade = "blue", stretch=2.9, space= 95)
@@ -139,6 +189,8 @@ window.title("BreakOut")
 window.screensize(500, 500, 'black')
 ball = Ball()
 paddle = Paddle()
+remaining = Remaining()
+check_blocks_left()
 # block = Block(3)
 onkey(move_paddle_right, "Right")
 onkey(move_paddle_left, "Left")
@@ -146,7 +198,6 @@ onkey(start_ball, "space")
 onkey(pause, "p")
 onkey(resume, "r")
 listen()
-
 
 
 
