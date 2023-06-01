@@ -1,4 +1,11 @@
-import turtle
+## To finish this / improve
+# 1. Write functions for changing the ball heading
+# 2. Sort the score out in the top right corner
+# 3. Make it so that the game ends if the ball runs of the bottom of the screen
+# 4. Introduce scores, levels and a high score tracker
+
+
+
 from turtle import *
 
 row1=[]
